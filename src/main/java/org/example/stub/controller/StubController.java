@@ -1,5 +1,6 @@
 package org.example.stub.controller;
 
+import jakarta.validation.Valid;
 import org.example.stub.dto.LoginRequest;
 import org.example.stub.dto.LoginResponse;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class StubController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> postLogin(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> postLogin(@RequestBody @Valid LoginRequest request) {
 
         delay();
 

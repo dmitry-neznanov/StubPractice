@@ -2,6 +2,7 @@ package org.example.stub.controller;
 
 import org.example.stub.dto.LoginRequest;
 import org.example.stub.dto.LoginResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -24,24 +25,26 @@ public class StubController {
     }
 
     @GetMapping("/login")
-    public String getLogin() {
+    public ResponseEntity<String> getLogin() {
 
         delay();
 
-        return """ 
+        return ResponseEntity.ok(""" 
                 {"login": "login1","status":"ok"}
-                """;
+                """);
     }
 
     @PostMapping("/login")
-    public LoginResponse postLogin(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> postLogin(@RequestBody LoginRequest request) {
 
         delay();
 
-        return new LoginResponse(
+        LoginResponse response = new LoginResponse(
                 request.getLogin(),
                 request.getPassword(),
                 LocalDateTime.now().format(FORMATTER)
         );
+
+        return ResponseEntity.ok(response);
     }
 }

@@ -1,5 +1,7 @@
-package org.example.stub.exeption;
+package org.example.stub.exception;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -12,7 +14,7 @@ import java.util.Map;
 public class StubExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidation(MethodArgumentNotValidException ex) {
 
         Map<String, String> errors = new HashMap<>();
@@ -24,5 +26,25 @@ public class StubExceptionHandler {
                 );
 
         return errors;
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, String> handleUserNotFound(
+            UserNotFoundException ex) {
+
+        return Map.of(
+                "error", ex.getMessage()
+        );
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleBadJson(
+            HttpMessageNotReadableException ex) {
+
+        return Map.of(
+                "error", "Invalid JSON"
+        );
     }
 }

@@ -2,13 +2,19 @@ package org.example.stub.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 
 @Data
 @AllArgsConstructor
-public class LoginResponse {
+@NoArgsConstructor
+public class User {
+
     private String login;
     private String password;
-    private LocalDate date;
+    private LocalDate registrationDate;
+    private String email;
 }

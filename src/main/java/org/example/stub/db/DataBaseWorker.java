@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.Properties;
 import java.sql.*;
 
@@ -29,33 +30,39 @@ public class DataBaseWorker {
     private static final String USER = PROPERTIES.getProperty("db.user");
     private static final String PASSWORD = PROPERTIES.getProperty("db.password");
 
+    private static final String userByLoginSql =
+            "SELECT u.login, u.password, u.registration_date, e.email " +
+            "FROM users u " +
+            "JOIN user_emails e ON u.login = e.login " +
+            "WHERE u.login = ?";
+
+    private static final String insertUserSql =
+            "INSERT INTO users(login, password, registration_date) VALUES (?, ?, ?)";
+
+    private static final String insertEmailSql =
+            "INSERT INTO user_emails(login, email) VALUES (?, ?)";
+
 
     public User getUserByLogin(String login) {
 
-        String sql =
-                "SELECT u.login, u.password, u.registration_date, e.email " +
-                        "FROM users u " +
-                        "JOIN user_emails e ON u.login = e.login " +
-                        "WHERE u.login = ?";
-
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(userByLoginSql)) {
 
             preparedStatement.setString(1, login);
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            ResultSet resultSet = preparedStatement.executeQuery();
 
                 if (resultSet.next()) {
                     return new User(
                             resultSet.getString("login"),
                             resultSet.getString("password"),
-                            resultSet.getDate("registration_date").toLocalDate(),
-                            resultSet.getString("email")
+                            resultSet.getString("email"),
+                            resultSet.getDate("registration_date").toLocalDate()
                     );
 
+                } else {
+                    throw new UserNotFoundException(login);
                 }
-                throw new UserNotFoundException(login);
-            }
 
         } catch (SQLException e) {
             throw new RuntimeException("Database error", e);
@@ -64,11 +71,9 @@ public class DataBaseWorker {
 
     public int insertUser(User user) {
 
-        String insertUserSql =
-                "INSERT INTO users(login, password, registration_date) VALUES (?, ?, ?)";
-
-        String insertEmailSql =
-                "INSERT INTO user_emails(login, email) VALUES (?, ?)";
+        if (user.getRegistrationDate() == null) {
+            user.setRegistrationDate(LocalDate.now());
+        }
 
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement psUser = connection.prepareStatement(insertUserSql);
@@ -86,6 +91,11 @@ public class DataBaseWorker {
             psEmail.setString(2, user.getEmail());
 
             rows += psEmail.executeUpdate();
+
+
+            if (rows != 2) {
+                throw new RuntimeException();
+            }
 
             connection.commit();
 

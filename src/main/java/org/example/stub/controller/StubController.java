@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.example.stub.db.DataBaseWorker;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 
 import static org.example.stub.util.DelayManager.delay;
@@ -21,7 +19,7 @@ import static org.example.stub.util.DelayManager.delay;
 public class StubController {
 
     private final DataBaseWorker dataBaseWorker;
-    //private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
 
     public StubController(DataBaseWorker dataBaseWorker) {
         this.dataBaseWorker = dataBaseWorker;
@@ -40,22 +38,11 @@ public class StubController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> postLogin(@RequestBody @Valid LoginRequest request) {
+    public ResponseEntity<LoginResponse> postLogin(@RequestBody @Valid User newUser) {
 
         delay();
 
-        User newUser = new User(
-                request.getLogin(),
-                request.getPassword(),
-                LocalDate.now(),
-                request.getEmail()
-        );
-
-        int rows = dataBaseWorker.insertUser(newUser);
-
-        if (rows != 2) {
-            throw new RuntimeException("User was not created");
-        }
+        dataBaseWorker.insertUser(newUser);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new LoginResponse(

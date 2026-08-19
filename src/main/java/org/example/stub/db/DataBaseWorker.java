@@ -13,6 +13,14 @@ import java.sql.*;
 @Repository
 public class DataBaseWorker {
 
+    static {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("PostgreSQL JDBC driver not found", e);
+        }
+    }
+
     private static final Properties PROPERTIES = new Properties();
 
     static {

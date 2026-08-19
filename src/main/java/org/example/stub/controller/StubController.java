@@ -1,54 +1,78 @@
 package org.example.stub.controller;
 
 import jakarta.validation.Valid;
-import org.example.stub.dto.LoginRequest;
 import org.example.stub.dto.LoginResponse;
 import org.example.stub.dto.User;
+import org.example.stub.util.DelayManager;
+import org.example.stub.util.MemoryLeakManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.example.stub.db.DataBaseWorker;
+import java.util.concurrent.CompletableFuture;
 
-import java.time.LocalDate;
-
-
-import static org.example.stub.util.DelayManager.delay;
 
 @RestController
 @RequestMapping("/api")
 public class StubController {
 
     private final DataBaseWorker dataBaseWorker;
+    private final MemoryLeakManager memoryLeakManager;
 
-
-    public StubController(DataBaseWorker dataBaseWorker) {
+    public StubController(DataBaseWorker dataBaseWorker,
+                          MemoryLeakManager memoryLeakManager) {
         this.dataBaseWorker = dataBaseWorker;
+        this.memoryLeakManager = memoryLeakManager;
     }
 
 
-    //параметр GET /api/login?login=new_user
-    @GetMapping("/login")
-    public ResponseEntity<User> getLogin(@RequestParam String login) {
+    @GetMapping("/api/login")
+    public CompletableFuture<ResponseEntity<User>> getLogin(
+            @RequestParam String login) {
 
-        delay();
+        return DelayManager.delayAsync()
+                .thenApply(v -> {
 
-        User userByLogin = dataBaseWorker.getUserByLogin(login);
+                    User user = dataBaseWorker.getUserByLogin(login);
 
-        return ResponseEntity.ok(userByLogin);
+                    return ResponseEntity.ok(user);
+                });
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> postLogin(@RequestBody @Valid User newUser) {
+    public CompletableFuture<ResponseEntity<LoginResponse>> postLogin(
+            @RequestBody @Valid User newUser) {
 
-        delay();
+        return DelayManager.delayAsync()
+                .thenApply(v -> {
 
-        dataBaseWorker.insertUser(newUser);
+                    dataBaseWorker.insertUser(newUser);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new LoginResponse(
-                        newUser.getLogin(),
-                        newUser.getPassword(),
-                        newUser.getRegistrationDate()
-                ));
+                    return ResponseEntity.status(HttpStatus.CREATED)
+                            .body(new LoginResponse(
+                                    newUser.getLogin(),
+                                    newUser.getPassword(),
+                                    newUser.getRegistrationDate()
+                            ));
+                });
+    }
+
+    @GetMapping("/memory-leak")
+    public ResponseEntity<String> memoryLeak(
+            @RequestParam(defaultValue = "1") int sizeMb) {
+
+        memoryLeakManager.leak(sizeMb);
+
+        return ResponseEntity.ok(
+                "Allocated and retained " + sizeMb + " MB"
+        );
+    }
+
+    @PostMapping("/memory-leak/clear")
+    public ResponseEntity<String> clearMemoryLeak() {
+
+        memoryLeakManager.clear();
+
+        return ResponseEntity.ok("Memory leak storage cleared");
     }
 }

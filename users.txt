@@ -1,0 +1,8 @@
+{"login":"new_user2","password":"1234","email":"new_user@mail.com","registrationDate":"2026-08-02"}
+{"login":"new_user6","password":"1234","email":"new_user@email.com","registrationDate":"2026-08-04"}
+{"login":"new_user8","password":"1234","email":"new_user@email.com","registrationDate":"2026-08-05"}
+{"login":"new_user","password":"1234","email":"new_user@mail.com","registrationDate":"2026-08-02"}
+{"login":"new_user","password":"1234","email":"new_user@mail.com","registrationDate":"2026-08-02"}
+{"login":"new_user2","password":"1234","email":"new_user@mail.com","registrationDate":"2026-08-02"}
+{"login":"new_user3","password":"1234","email":"new_user@mail.com","registrationDate":"2026-08-03"}
+{"login":"new_user3","password":"1234","email":"new_user@mail.com","registrationDate":"2026-08-03"}

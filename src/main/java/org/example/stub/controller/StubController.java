@@ -1,6 +1,7 @@
 package org.example.stub.controller;
 
 import jakarta.validation.Valid;
+import org.example.stub.db.FileWorker;
 import org.example.stub.dto.LoginRequest;
 import org.example.stub.dto.LoginResponse;
 import org.example.stub.dto.User;
@@ -19,10 +20,12 @@ import static org.example.stub.util.DelayManager.delay;
 public class StubController {
 
     private final DataBaseWorker dataBaseWorker;
+    private final FileWorker fileWorker;
 
 
-    public StubController(DataBaseWorker dataBaseWorker) {
+    public StubController(DataBaseWorker dataBaseWorker, FileWorker fileWorker) {
         this.dataBaseWorker = dataBaseWorker;
+        this.fileWorker = fileWorker;
     }
 
 
@@ -33,6 +36,8 @@ public class StubController {
         delay();
 
         User userByLogin = dataBaseWorker.getUserByLogin(login);
+
+        fileWorker.writeUser(userByLogin);
 
         return ResponseEntity.ok(userByLogin);
     }
@@ -50,5 +55,13 @@ public class StubController {
                         newUser.getPassword(),
                         newUser.getRegistrationDate()
                 ));
+    }
+
+    @GetMapping("/random")
+    public ResponseEntity<String> getRandom() {
+
+        delay();
+
+        return ResponseEntity.ok(fileWorker.readRandomLine());
     }
 }

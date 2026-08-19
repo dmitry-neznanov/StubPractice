@@ -1,0 +1,10 @@
+{"login":"user1","password":"111","email":"user1@mail.com","registrationDate":"2026-08-02"}
+{"login":"user2","password":"222","email":"user2@mail.com","registrationDate":"2026-08-02"}
+{"login":"user3","password":"333","email":"user3@mail.com","registrationDate":"2026-08-02"}
+{"login":"user4","password":"444","email":"user4@mail.com","registrationDate":"2026-08-02"}
+{"login":"user5","password":"555","email":"user5@mail.com","registrationDate":"2026-08-02"}
+{"login":"user6","password":"666","email":"user6@mail.com","registrationDate":"2026-08-02"}
+{"login":"user7","password":"777","email":"user7@mail.com","registrationDate":"2026-08-02"}
+{"login":"user8","password":"888","email":"user8@mail.com","registrationDate":"2026-08-02"}
+{"login":"user9","password":"999","email":"user9@mail.com","registrationDate":"2026-08-02"}
+{"login":"user10","password":"1010","email":"user10@mail.com","registrationDate":"2026-08-02"}

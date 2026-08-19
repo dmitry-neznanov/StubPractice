@@ -26,7 +26,7 @@ public class StubController {
     }
 
 
-    @GetMapping("/api/login")
+    @GetMapping("/login")
     public CompletableFuture<ResponseEntity<User>> getLogin(
             @RequestParam String login) {
 
